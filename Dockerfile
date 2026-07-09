@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY frontend/ ./frontend/
 WORKDIR /app/frontend
-RUN npm install --legacy-peer-deps && npm run build
+RUN npm install --legacy-peer-deps && npm run build && cp -r public/* out/
 WORKDIR /app
 
 COPY app.py .
