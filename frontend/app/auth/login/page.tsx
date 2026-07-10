@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { LockKeyhole, Mail, Eye, EyeOff, ArrowRight, Shield } from "lucide-react";
 import apiClient from "@/lib/api-client";
@@ -292,17 +291,21 @@ export default function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <div className="relative group">
-                    <Mail className="absolute left-3.5 top-3.5 h-4 w-4 text-blue-300/50 group-focus-within:text-blue-400 transition-colors" />
-                    <Input
-                      label="Email Address"
-                      type="email"
-                      placeholder="name@company.com"
-                      className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/30 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all"
-                      value={formData.email}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
-                      required
-                    />
+                  <div className="w-full space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/35 leading-none">
+                      Email Address
+                    </label>
+                    <div className="relative group">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-blue-300/40 group-focus-within:text-blue-400 transition-colors" />
+                      <input
+                        type="email"
+                        placeholder="name@company.com"
+                        className="flex w-full rounded-xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm pl-11 pr-4 py-3 text-sm text-white/85 placeholder:text-blue-200/30 outline-none transition-all duration-300 focus:border-blue-500/30 focus:bg-blue-500/[0.04] focus:shadow-[0_0_0_3px_rgba(99,102,241,0.06),0_0_24px_rgba(99,102,241,0.06),0_0_48px_rgba(99,102,241,0.02)] hover:border-white/[0.10] hover:bg-white/[0.04] hover:shadow-[0_0_20px_rgba(99,102,241,0.04)]"
+                        value={formData.email}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                      />
+                    </div>
                   </div>
                 </motion.div>
 
@@ -313,24 +316,28 @@ export default function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <div className="relative group">
-                    <LockKeyhole className="absolute left-3.5 top-3.5 h-4 w-4 text-blue-300/50 group-focus-within:text-blue-400 transition-colors" />
-                    <Input
-                      label="Password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/30 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all"
-                      value={formData.password}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-3.5 text-blue-300/50 hover:text-blue-300 transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
+                  <div className="w-full space-y-1.5">
+                    <label className="text-[11px] font-bold uppercase tracking-[0.08em] text-white/35 leading-none">
+                      Password
+                    </label>
+                    <div className="relative group">
+                      <LockKeyhole className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-blue-300/40 group-focus-within:text-blue-400 transition-colors" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        className="flex w-full rounded-xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm pl-11 pr-11 py-3 text-sm text-white/85 placeholder:text-blue-200/30 outline-none transition-all duration-300 focus:border-blue-500/30 focus:bg-blue-500/[0.04] focus:shadow-[0_0_0_3px_rgba(99,102,241,0.06),0_0_24px_rgba(99,102,241,0.06),0_0_48px_rgba(99,102,241,0.02)] hover:border-white/[0.10] hover:bg-white/[0.04] hover:shadow-[0_0_20px_rgba(99,102,241,0.04)]"
+                        value={formData.password}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-blue-300/40 hover:text-blue-300 transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
 
