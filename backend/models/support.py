@@ -26,8 +26,8 @@ class SupportTicket(Base):
     message = Column(Text, nullable=False)
     priority = Column(SAEnum(TicketPriority, values_callable=enum_values), default=TicketPriority.MEDIUM)
     status = Column(SAEnum(TicketStatus, values_callable=enum_values), default=TicketStatus.OPEN)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
     user = relationship("User")
 
 class TicketReply(Base):
@@ -72,6 +72,6 @@ class KYC(Base):
     id_number = Column(String(100))
     status = Column(String(20), default="pending")
     admin_notes = Column(Text)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
     user = relationship("User")

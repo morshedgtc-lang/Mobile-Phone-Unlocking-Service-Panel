@@ -168,7 +168,7 @@ export default function AdminOrdersPage() {
               className="glass-input pl-10 w-full"
               placeholder="Search by Order ID or IMEI..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
             />
           </div>
           <div className="relative">
@@ -183,7 +183,7 @@ export default function AdminOrdersPage() {
                 paddingRight: "2.5rem",
               }}
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterStatus(e.target.value)}
             >
               <option value="all" style={{ background: "#0f1729", color: "rgba(255,255,255,0.85)" }}>All Status</option>
               <option value="pending" style={{ background: "#0f1729", color: "rgba(255,255,255,0.85)" }}>Waiting Accept</option>
@@ -351,7 +351,7 @@ export default function AdminOrdersPage() {
                                       className="flex w-full rounded-xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm px-4 py-3 text-sm text-white/85 placeholder-white/20 outline-none transition-all duration-300 focus:border-blue-500/30 focus:bg-blue-500/[0.04] focus:shadow-[0_0_0_3px_rgba(99,102,241,0.06),0_0_24px_rgba(99,102,241,0.06)]"
                                       placeholder="e.g. 12345678 or unlock code"
                                       value={unlockInstructions}
-                                      onChange={(e) => setUnlockInstructions(e.target.value)}
+                                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUnlockInstructions(e.target.value)}
                                     />
                                   </div>
                                   <div className="w-full space-y-1.5">
@@ -362,7 +362,7 @@ export default function AdminOrdersPage() {
                                       className="flex w-full rounded-xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm px-4 py-3 text-sm text-white/85 placeholder-white/20 outline-none transition-all duration-300 focus:border-blue-500/30 min-h-[80px] resize-y"
                                       placeholder="e.g. Insert non-accepted SIM, enter code when prompted, restart device..."
                                       value={adminNotes}
-                                      onChange={(e) => setAdminNotes(e.target.value)}
+                                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAdminNotes(e.target.value)}
                                     />
                                   </div>
                                 </div>

@@ -51,7 +51,7 @@ export default function AdminUsersPage() {
             className="glass-input pl-10"
             placeholder="Search by email or username..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
           />
         </div>
         {loading ? (

@@ -82,7 +82,7 @@ export default function SupportPage() {
           {selectedTicket.status !== "closed" && (
             <div className="flex gap-3">
               <div className="flex-1">
-                <Input placeholder="Type your reply..." value={reply} onChange={e => setReply(e.target.value)} />
+                <Input placeholder="Type your reply..." value={reply} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReply(e.target.value)} />
               </div>
               <Button onClick={sendReply}>Send</Button>
               <Button variant="outline" onClick={() => closeTicket(selectedTicket.id)}>Close</Button>
@@ -108,8 +108,8 @@ export default function SupportPage() {
       {showNew && (
         <Card title="Create New Ticket">
           <div className="space-y-4 relative z-10">
-            <Input label="Subject" placeholder="e.g. Payment issue" value={subject} onChange={e => setSubject(e.target.value)} />
-            <Input label="Message" placeholder="Describe your issue in detail..." value={message} onChange={e => setMessage(e.target.value)} className="!min-h-[120px]" />
+<Input label="Subject" placeholder="e.g. Payment issue" value={subject} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSubject(e.target.value)} />
+<Input label="Message" placeholder="Describe your issue in detail..." value={message} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)} className="!min-h-[120px]" />
             <div className="flex gap-3">
               <Button onClick={createTicket} isLoading={submitting}>Submit Ticket</Button>
               <Button variant="outline" onClick={() => setShowNew(false)}>Cancel</Button>

@@ -314,9 +314,9 @@ export default function AdminServicesPage() {
                         backgroundPosition: "right 0.75rem center",
                         paddingRight: "2.5rem",
                       }}
-                      value={serviceForm.category_id}
-                      onChange={(e) => setServiceForm({ ...serviceForm, category_id: e.target.value })}
-                      required
+value={serviceForm.category_id}
+onChange={(e: any) => setServiceForm({ ...serviceForm, category_id: e.target.value })}
+required
                     >
                       <option value="" disabled style={{ background: "#0f1729", color: "rgba(255,255,255,0.4)" }}>Select category...</option>
                       {categories.map((c) => (
@@ -363,12 +363,12 @@ export default function AdminServicesPage() {
                         <input
                           className="flex-1 bg-transparent border border-white/[0.06] rounded-lg px-3 py-2 text-sm text-white/80 placeholder-white/20 outline-none focus:border-blue-500/30"
                           placeholder="Field label (e.g. IMEI Number)"
-                          value={req.label}
-                          onChange={(e) => {
-                            const next = [...serviceReqs];
-                            next[idx] = { ...next[idx], label: e.target.value };
-                            setServiceReqs(next);
-                          }}
+value={req.label}
+onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        const next = [...serviceReqs];
+        next[idx] = { ...next[idx], label: e.target.value };
+        setServiceReqs(next);
+      }}
                         />
                         <select
                           className="flex-shrink-0 rounded-lg px-3 py-2 text-sm text-white/80 outline-none min-w-[110px]"
@@ -382,12 +382,12 @@ export default function AdminServicesPage() {
                             WebkitAppearance: "none",
                             appearance: "none" as any,
                           }}
-                          value={req.type}
-                          onChange={(e) => {
-                            const next = [...serviceReqs];
-                            next[idx] = { ...next[idx], type: e.target.value as any };
-                            setServiceReqs(next);
-                          }}
+value={req.type}
+onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+  const next = [...serviceReqs];
+  next[idx] = { ...next[idx], type: e.target.value as any };
+  setServiceReqs(next);
+}}
                         >
                           <option value="text" style={{ background: "#0f1729", color: "rgba(255,255,255,0.85)" }}>Text</option>
                           <option value="file" style={{ background: "#0f1729", color: "rgba(255,255,255,0.85)" }}>File Upload</option>
@@ -472,7 +472,7 @@ export default function AdminServicesPage() {
               className="glass-input pl-10 w-full"
               placeholder="Search services..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
             />
           </div>
           <div className="relative">
@@ -487,7 +487,7 @@ export default function AdminServicesPage() {
                 paddingRight: "2.5rem",
               }}
               value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFilterCategory(e.target.value)}
             >
               <option value="all" style={{ background: "#0f1729", color: "rgba(255,255,255,0.85)" }}>All Categories</option>
               {categories.map((c) => (

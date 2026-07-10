@@ -21,6 +21,9 @@ raw_origins = os.getenv("CORS_ORIGINS", "*")
 cors_origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
 allow_credentials = raw_origins != "*"
 
+if raw_origins == "*":
+    cors_origins = []
+
 docs_url = "/docs" if ENABLE_DOCS else None
 redoc_url = "/redoc" if ENABLE_DOCS else None
 

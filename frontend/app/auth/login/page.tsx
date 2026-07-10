@@ -300,7 +300,7 @@ export default function LoginPage() {
                       placeholder="name@company.com"
                       className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/30 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, email: e.target.value })}
                       required
                     />
                   </div>
@@ -321,7 +321,7 @@ export default function LoginPage() {
                       placeholder="••••••••"
                       className="pl-10 pr-10 bg-white/5 border-white/10 text-white placeholder:text-blue-200/30 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all"
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, password: e.target.value })}
                       required
                     />
                     <button

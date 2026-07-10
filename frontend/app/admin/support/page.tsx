@@ -77,7 +77,7 @@ export default function AdminSupportPage() {
           {selected.status !== "closed" && (
             <div className="flex gap-3">
               <div className="flex-1">
-                <Input placeholder="Type reply..." value={reply} onChange={e => setReply(e.target.value)} />
+                <Input placeholder="Type reply..." value={reply} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReply(e.target.value)} />
               </div>
               <Button onClick={sendReply}>Reply</Button>
             </div>

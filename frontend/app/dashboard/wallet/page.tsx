@@ -108,7 +108,7 @@ export default function WalletPage() {
                   min="1"
                   placeholder="e.g. 100.00"
                   value={reloadAmount}
-                  onChange={(e) => setReloadAmount(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReloadAmount(e.target.value)}
                 />
               </div>
               <div className="flex gap-3 w-full sm:w-auto">

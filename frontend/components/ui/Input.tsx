@@ -1,19 +1,30 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
+type InputProps = {
+  className?: string;
   label?: string;
   error?: string;
   as?: "input" | "textarea";
-}
+} & React.InputHTMLAttributes<HTMLInputElement>;
+
+type TextareaProps = {
+  className?: string;
+  label?: string;
+  error?: string;
+  as?: "textarea";
+} & React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+type CombinedInputProps = InputProps | TextareaProps;
 
 export const Input = ({
   className,
   label,
   error,
-  as: Component = "input",
+  as,
   ...props
-}: InputProps) => {
+}: CombinedInputProps) => {
+  const Component = as === "textarea" ? "textarea" : "input";
   const inputClasses = cn(
     "flex w-full rounded-xl",
     "border border-white/[0.06]",
@@ -39,12 +50,12 @@ export const Input = ({
       {Component === "textarea" ? (
         <textarea
           className={cn(inputClasses, "min-h-[100px] resize-y")}
-          {...(props as any)}
+          {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       ) : (
         <input
           className={inputClasses}
-          {...(props as any)}
+          {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
         />
       )}
       {error && <p className="text-xs font-medium text-red-400">{error}</p>}

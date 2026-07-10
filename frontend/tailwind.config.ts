@@ -2,17 +2,10 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./context/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx,mdx}",
-    "./dashboard/**/*.{js,ts,jsx,tsx,mdx}",
-    "./orders/**/*.{js,ts,jsx,tsx,mdx}",
-    "./services/**/*.{js,ts,jsx,tsx,mdx}",
-    "./wallet/**/*.{js,ts,jsx,tsx,mdx}",
-    "./settings/**/*.{js,ts,jsx,tsx,mdx}",
-    "./profile/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: "class",
   theme: {

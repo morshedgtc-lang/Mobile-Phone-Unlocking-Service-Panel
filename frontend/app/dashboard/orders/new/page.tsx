@@ -169,7 +169,7 @@ export default function CreateOrderPage() {
               className="glass-input h-12 text-base pl-11"
               placeholder="Search for your phone model or service..."
               value={serviceSearch}
-              onChange={(e) => setServiceSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setServiceSearch(e.target.value)}
             />
           </div>
 
@@ -252,10 +252,10 @@ export default function CreateOrderPage() {
                                 accept="image/*"
                                 className="hidden"
                                 id={`file-${idx}`}
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) handleFieldChange(req.label, file.name);
-                                }}
+onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) handleFieldChange(req.label, file.name);
+      }}
                               />
                               <label htmlFor={`file-${idx}`} className="flex items-center gap-2 cursor-pointer w-full">
                                 <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/10">
@@ -281,9 +281,9 @@ export default function CreateOrderPage() {
                             <select
                               className="flex w-full rounded-xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm px-4 py-3 text-sm text-white/85 outline-none transition-all duration-300 focus:border-blue-500/30"
                               value={dynamicFields[req.label] || ""}
-                              onChange={(e) => handleFieldChange(req.label, e.target.value)}
-                              required={req.required}
-                            >
+onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleFieldChange(req.label, e.target.value)}
+      required={req.required}
+      >
                               <option value="" disabled>Select...</option>
                               {req.options?.map((opt, oi) => (
                                 <option key={oi} value={opt}>{opt}</option>
@@ -298,8 +298,8 @@ export default function CreateOrderPage() {
                             label={`${req.label} ${req.required ? "*" : ""}`}
                             placeholder={`Enter ${req.label.toLowerCase()}`}
                             required={req.required}
-                            value={dynamicFields[req.label] || ""}
-                            onChange={(e) => handleFieldChange(req.label, e.target.value)}
+value={dynamicFields[req.label] || ""}
+onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldChange(req.label, e.target.value)}
                           />
                         </div>
                       );
@@ -312,7 +312,7 @@ export default function CreateOrderPage() {
                   placeholder="Any specific instructions for the technician..."
                   as="textarea"
                   value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
                 />
 
                 <div className="flex gap-4 pt-2">
