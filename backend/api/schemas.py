@@ -149,13 +149,6 @@ class OrderResponse(BaseModel):
         from_attributes = True
 
 # Wallet Schema
-class WalletTransactionCreate(BaseModel):
-    user_id: UUID
-    amount: float
-    transaction_type: str # 'credit', 'debit', 'refund'
-    description: str
-    created_by: Optional[UUID] = None
-
 class WalletTransactionResponse(BaseModel):
     id: UUID
     user_id: UUID

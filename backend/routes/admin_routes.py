@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
 from database.session import get_db
 from models.user import User, UserRole, UserGroup
 from models.order import Order
-from models.support import SupportTicket
-from models.support import AuditLog, Notification, KYC
+from models.support import AuditLog, KYC
 from auth.jwt_handler import JWTHandler
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel

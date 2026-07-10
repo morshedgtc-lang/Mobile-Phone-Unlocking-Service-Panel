@@ -6,9 +6,9 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import {
-  Plus, Trash2, Edit3, Search, Filter, X, Save,
-  Tag, Clock, DollarSign, AlertTriangle, ToggleLeft, ToggleRight,
-  ChevronDown, Package, GripVertical, SquareCheck, Square, Upload
+  Plus, Trash2, Edit3, Search, Save,
+  Tag, DollarSign, AlertTriangle, ToggleLeft, ToggleRight,
+  ChevronDown, SquareCheck, Square
 } from "lucide-react";
 import apiClient from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/utils";

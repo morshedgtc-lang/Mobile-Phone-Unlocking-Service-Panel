@@ -6,9 +6,9 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import {
-  Search, Filter, CheckCircle, XCircle, FileText, MessageSquare,
-  Clock, AlertTriangle, Eye, ChevronDown, ChevronUp, Send,
-  CirclePlay, CirclePause, Ban, Copy, ArrowDownToLine
+  Search, CheckCircle, FileText,
+  ChevronDown, ChevronUp, Send,
+  CirclePlay, CirclePause, Ban
 } from "lucide-react";
 import apiClient from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/utils";

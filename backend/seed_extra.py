@@ -9,7 +9,6 @@ from models.user import User, UserRole, UserGroup
 from models.order import Order, Service, Category
 from models.support import SupportTicket, TicketReply, AuditLog, Notification, KYC
 from auth.security import Security
-import uuid
 
 def seed_extra():
     db = SessionLocal()

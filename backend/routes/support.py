@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
 from pydantic import BaseModel
 from database.session import get_db
 from models.support import SupportTicket, TicketReply, TicketPriority, TicketStatus

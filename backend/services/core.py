@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from models.user import User, UserRole, UserGroup, WalletTransaction
+from models.user import User, UserRole, WalletTransaction
 from models.order import Order, Service, OrderStatus
 from api.schemas import UserCreate, OrderCreate
 from auth.security import Security
@@ -25,31 +25,6 @@ class UserService:
         db.add(user)
         db.commit()
         db.refresh(user)
-        return user
-
-    @staticmethod
-    def update_balance(db: Session, user_id: str, amount: float, tx_type: str, description: str, admin_id: str = None):
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
-        if tx_type == "debit" and user.balance < amount:
-            raise HTTPException(status_code=400, detail="Insufficient balance")
-        
-        if tx_type == "credit" or tx_type == "refund":
-            user.balance += amount
-        elif tx_type == "debit":
-            user.balance -= amount
-            
-        transaction = WalletTransaction(
-            user_id=user_id,
-            amount=amount,
-            transaction_type=tx_type,
-            description=description,
-            created_by=admin_id
-        )
-        db.add(transaction)
-        db.commit()
         return user
 
 class OrderService:

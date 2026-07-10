@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Search, ArrowUpRight, Activity, CheckCircle, Clock, ChevronDown, ChevronUp, Copy, Info } from "lucide-react";
+import { Search, Activity, CheckCircle, Clock, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import apiClient from "@/lib/api-client";
 
 interface Order {

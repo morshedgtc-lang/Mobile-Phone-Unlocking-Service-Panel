@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { User, Mail, Shield, DollarSign, Calendar } from "lucide-react";
 import apiClient from "@/lib/api-client";
