@@ -41,10 +41,15 @@ def seed_admin():
         db = SessionLocal()
         existing = db.query(User).filter(User.role == UserRole.SUPER_ADMIN).first()
         if not existing:
-            admin_email = os.getenv("ADMIN_EMAIL", "admin@unlockpro.com")
-            admin_password = os.getenv("ADMIN_PASSWORD", "Admin@123456")
+            admin_email = os.getenv("ADMIN_EMAIL")
+            admin_password = os.getenv("ADMIN_PASSWORD")
+            admin_username = os.getenv("ADMIN_USERNAME", "admin")
+            if not admin_email or not admin_password:
+                print("WARNING: ADMIN_EMAIL or ADMIN_PASSWORD not set — skipping admin seed")
+                db.close()
+                return
             db.add(User(
-                username=os.getenv("ADMIN_USERNAME", "admin"),
+                username=admin_username,
                 email=admin_email,
                 hashed_password=Security.get_password_hash(admin_password),
                 full_name="Super Administrator",
@@ -55,7 +60,7 @@ def seed_admin():
                 balance=0.0,
             ))
             db.commit()
-            print(f"Super admin created: {admin_email} / (from ADMIN_PASSWORD env var)")
+            print(f"Super admin created: {admin_email}")
         db.close()
     except Exception as e:
         print(f"Seed admin skipped: {e}")
