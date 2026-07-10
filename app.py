@@ -10,8 +10,9 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from routes import auth, users, orders, services, wallet, support, admin_routes, notifications
+from routes import auth, users, orders, services, wallet, support, admin_routes, notifications, reseller_api, admin_resellers
 from security.middleware import RateLimiter
+import models.api_log  # noqa: F401 — ensure APIRequestLog table is created
 
 ENV = os.getenv("ENV", "production").lower()
 ENABLE_DOCS = os.getenv("ENABLE_DOCS", "false").lower() in ("1", "true", "yes")
@@ -54,9 +55,10 @@ def seed_admin():
                 hashed_password=Security.get_password_hash(admin_password),
                 full_name="Super Administrator",
                 role=UserRole.SUPER_ADMIN,
-                group=UserGroup.RETAIL,
+                group=UserGroup.WHOLESALE,
                 is_active=True,
                 is_verified=True,
+                is_approved=True,
                 balance=0.0,
             ))
             db.commit()
@@ -82,6 +84,8 @@ app.include_router(wallet.router)
 app.include_router(support.router)
 app.include_router(admin_routes.router)
 app.include_router(notifications.router)
+app.include_router(reseller_api.router)
+app.include_router(admin_resellers.router)
 
 @app.get("/health")
 def health():

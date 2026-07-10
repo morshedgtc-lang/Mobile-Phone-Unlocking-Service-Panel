@@ -159,3 +159,61 @@ class WalletTransactionResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# Reseller API Schemas
+class ResellerOrderCreate(BaseModel):
+    service_id: UUID
+    order_data: dict
+    customer_notes: Optional[str] = None
+
+class ResellerOrderResponse(BaseModel):
+    order_id: UUID
+    status: str
+    price_paid: float
+    remaining_balance: float
+    message: str
+
+class ResellerOrderStatus(BaseModel):
+    order_id: UUID
+    status: str
+    price_paid: float
+    order_data: str
+    admin_result: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class ResellerBalanceResponse(BaseModel):
+    balance: float
+    group: str
+    is_approved: bool
+
+class ResellerServiceResponse(BaseModel):
+    id: UUID
+    name: str
+    description: Optional[str] = None
+    reseller_price: float
+    distributor_price: float
+    processing_time: Optional[str] = None
+    requirements: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class ResellerDepositRequest(BaseModel):
+    amount: float = Field(..., gt=0)
+    payment_method: str = Field(..., min_length=1)
+    reference_number: Optional[str] = None
+
+class AdminDashboardStats(BaseModel):
+    total_resellers: int
+    approved_resellers: int
+    pending_approvals: int
+    pending_deposits: int
+    pending_orders: int
+    today_orders: int
+    total_orders: int
+    total_revenue: float

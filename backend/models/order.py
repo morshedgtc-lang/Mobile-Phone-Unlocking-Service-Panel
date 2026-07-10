@@ -72,6 +72,9 @@ class Order(Base):
     admin_notes = Column(Text)
     customer_notes = Column(Text)
     admin_result = Column(Text)  # JSON: unlock key, instructions, etc.
+    lock_photo = Column(String, nullable=True)  # File path to lock screen photo
+    mdm_photo = Column(String, nullable=True)   # File path to MDM screen photo
+    error_photo = Column(String, nullable=True)  # File path to error screen photo
     
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)

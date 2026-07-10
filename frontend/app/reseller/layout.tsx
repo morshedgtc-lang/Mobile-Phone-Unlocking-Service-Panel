@@ -4,23 +4,21 @@ import React, { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { 
-  LayoutDashboard, 
-  ShoppingBag, 
-  Wallet, 
-  User, 
-  Settings, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  FilePlus,
+  Wallet,
+  BookOpen,
+  LogOut,
   Bell,
   Menu,
   X,
-  MessageSquare,
-  Shield,
   Key
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function ResellerLayout({ children }: { children: React.ReactNode }) {
   const { user, logout, isLoading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -43,27 +41,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <div className="w-12 h-12 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
             <div className="absolute inset-0 w-12 h-12 border-2 border-purple-500/10 border-b-purple-500 rounded-full animate-spin" style={{ animationDirection: "reverse", animationDuration: "1.5s" }} />
           </div>
-          <p className="text-sm text-white/30 font-medium tracking-wide">Loading dashboard...</p>
+          <p className="text-sm text-white/30 font-medium tracking-wide">Loading reseller panel...</p>
         </div>
       </div>
     );
   }
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
-    { icon: ShoppingBag, label: "Create Order", href: "/dashboard/orders/new" },
-    { icon: ShoppingBag, label: "Order History", href: "/dashboard/orders" },
-    { icon: Wallet, label: "Wallet & Funds", href: "/dashboard/wallet" },
-    { icon: MessageSquare, label: "Support", href: "/dashboard/support" },
-    { icon: User, label: "My Profile", href: "/dashboard/profile" },
-    { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+    { icon: LayoutDashboard, label: "Overview", href: "/reseller" },
+    { icon: ShoppingBag, label: "My Orders", href: "/reseller/orders" },
+    { icon: FilePlus, label: "Manual Order", href: "/reseller/manual-order" },
+    { icon: Wallet, label: "Deposit Request", href: "/reseller/deposit" },
+    { icon: BookOpen, label: "API Docs", href: "/reseller/api-docs" },
   ];
-
-  const resellerItem = (user?.group === "reseller" || user?.group === "distributor")
-    ? [{ icon: Key, label: "Reseller Panel", href: "/reseller" }]
-    : [];
-
-  const allMenuItems = [...menuItems.slice(0, -2), ...resellerItem, ...menuItems.slice(-2)];
 
   const isActive = (href: string) => pathname === href;
 
@@ -80,11 +70,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {isSidebarOpen && (
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
-                <Shield size={17} className="text-white" />
+                <Key size={17} className="text-white" />
               </div>
               <div>
-                <span className="font-bold text-base text-gradient tracking-tight block leading-none">Unlock Pro</span>
-                <span className="text-[10px] text-white/25 font-medium tracking-widest uppercase">Dashboard</span>
+                <span className="font-bold text-base text-gradient tracking-tight block leading-none">Reseller Panel</span>
+                <span className="text-[10px] text-white/25 font-medium tracking-widest uppercase">Unlock Pro</span>
               </div>
             </div>
           )}
@@ -96,7 +86,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="mx-3 mb-3 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         <nav className="flex-1 px-2.5 space-y-0.5">
-          {allMenuItems.map((item) => {
+          {menuItems.map((item) => {
             const active = isActive(item.href);
             return (
               <Link
@@ -125,9 +115,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         <div className="p-3 mx-2.5 mb-3">
           <div className="h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent mb-3" />
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-white/25 hover:text-white/60 hover:bg-white/[0.04] transition-all"
+          >
+            <LayoutDashboard size={18} className="min-w-[18px]" />
+            {isSidebarOpen && <span className="text-sm font-medium">User Dashboard</span>}
+          </Link>
           <Button
             variant="ghost"
-            className="w-full justify-start text-white/25 hover:text-red-400 hover:bg-red-500/[0.06] transition-all rounded-xl"
+            className="w-full justify-start text-white/25 hover:text-red-400 hover:bg-red-500/[0.06] transition-all rounded-xl mt-1"
             onClick={logout}
           >
             <LogOut size={18} className="min-w-[18px]" />
@@ -144,18 +141,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-500/50 animate-ping" />
             </div>
             <h2 className="text-sm font-semibold text-white/60">
-              {allMenuItems.find(m => isActive(m.href))?.label || "Dashboard"}
+              {menuItems.find(m => isActive(m.href))?.label || "Reseller Panel"}
             </h2>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="relative text-white/35 hover:text-white/70 hover:bg-white/[0.04] rounded-xl">
               <Bell size={18} />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full glow-pulse" />
             </Button>
-            
+
             <div className="w-px h-6 bg-white/[0.06]" />
-            
+
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-white/70 leading-none">{user?.username || "User"}</p>

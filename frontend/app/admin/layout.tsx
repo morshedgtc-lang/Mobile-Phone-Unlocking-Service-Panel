@@ -16,7 +16,9 @@ import {
   X,
   BarChart3,
   Shield,
-  MessageSquare
+  MessageSquare,
+  UserCheck,
+  DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -54,6 +56,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { icon: ShoppingBag, label: "Orders", href: "/admin/orders" },
     { icon: BarChart3, label: "Services", href: "/admin/services" },
     { icon: Users, label: "Users", href: "/admin/users" },
+    { icon: UserCheck, label: "Resellers", href: "/admin/resellers" },
+    { icon: DollarSign, label: "Deposits", href: "/admin/deposits" },
     { icon: Wallet, label: "Wallet", href: "/admin/wallet" },
     { icon: MessageSquare, label: "Support", href: "/admin/support" },
     { icon: Settings, label: "Settings", href: "/admin/settings" },

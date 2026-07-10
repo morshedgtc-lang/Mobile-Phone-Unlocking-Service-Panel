@@ -41,7 +41,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('auth_user', JSON.stringify(user));
     setToken(token);
     setUser(user);
-    router.push('/dashboard');
+    if (user.group === 'reseller' || user.group === 'distributor') {
+      router.push('/reseller');
+    } else {
+      router.push('/dashboard');
+    }
   };
 
   const logout = () => {

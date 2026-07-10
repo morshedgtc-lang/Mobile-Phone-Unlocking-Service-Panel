@@ -30,6 +30,10 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     balance = Column(Float, default=0.0, nullable=False)
+    api_key = Column(String, unique=True, index=True, nullable=True)
+    is_approved = Column(Boolean, default=False)
+    approved_at = Column(DateTime(timezone=True), nullable=True)
+    api_key_created_at = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     deleted_at = Column(DateTime(timezone=True), nullable=True)
@@ -50,6 +54,12 @@ class WalletTransaction(Base):
 
     user = relationship("User", back_populates="wallet_transactions", foreign_keys="WalletTransaction.user_id")
 
+import secrets
+
+def generate_api_key():
+    """Generate a reseller API key in format rsl_32_random_hex_chars"""
+    return f"rsl_{secrets.token_hex(16)}"
+
 class ReloadRequest(Base):
     __tablename__ = "reload_requests"
 
@@ -58,6 +68,9 @@ class ReloadRequest(Base):
     amount = Column(Float, nullable=False)
     status = Column(String, default="pending")  # pending, approved, rejected
     admin_notes = Column(Text)
+    payment_method = Column(String, nullable=True)  # bank_transfer, crypto, mobile_money, etc.
+    reference_number = Column(String, nullable=True)
+    payment_proof = Column(String, nullable=True)  # File path to payment proof image
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

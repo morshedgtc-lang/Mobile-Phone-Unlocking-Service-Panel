@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from routes import auth, users, orders, services, wallet, support, admin_routes, notifications
+from routes import auth, users, orders, services, wallet, support, admin_routes, notifications, reseller_api, admin_resellers
 from security.middleware import RateLimiter
 
 app = FastAPI(
@@ -32,6 +32,8 @@ app.include_router(wallet.router)
 app.include_router(support.router)
 app.include_router(admin_routes.router)
 app.include_router(notifications.router)
+app.include_router(reseller_api.router)
+app.include_router(admin_resellers.router)
 
 @app.get("/")
 async def root():

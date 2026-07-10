@@ -26,9 +26,10 @@ def seed():
             hashed_password=Security.get_password_hash("Admin@123456"),
             full_name="Super Administrator",
             role=UserRole.SUPER_ADMIN,
-            group=UserGroup.RETAIL,
+            group=UserGroup.WHOLESALE,
             is_active=True,
             is_verified=True,
+            is_approved=True,
             balance=0.0,
         )
         db.add(admin)

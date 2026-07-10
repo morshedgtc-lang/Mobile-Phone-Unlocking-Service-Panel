@@ -29,6 +29,9 @@ async def get_admin_user(token: str = Depends(oauth2_scheme)):
 class ReloadRequestCreate(BaseModel):
     amount: float
     description: str = ""
+    payment_method: str = ""
+    reference_number: str = ""
+    payment_proof: str | None = None
 
 class ReloadRequestResponse(BaseModel):
     id: str
@@ -37,6 +40,7 @@ class ReloadRequestResponse(BaseModel):
     amount: float
     status: str
     admin_notes: str = ""
+    payment_proof: str | None = None
     created_at: datetime
 
     class Config:
@@ -76,7 +80,10 @@ def create_reload_request(req: ReloadRequestCreate, db: Session = Depends(get_db
     reload_req = ReloadRequest(
         user_id=user.id,
         amount=req.amount,
-        status="pending"
+        status="pending",
+        payment_method=req.payment_method or None,
+        reference_number=req.reference_number or None,
+        payment_proof=req.payment_proof or None,
     )
     db.add(reload_req)
     db.commit()
