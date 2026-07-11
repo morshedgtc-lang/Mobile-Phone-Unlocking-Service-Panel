@@ -43,6 +43,30 @@ def seed_admin():
     try:
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created/verified")
+
+        # Fix schema: add missing columns if they don't exist
+        try:
+            from sqlalchemy import text
+            db = SessionLocal()
+            try:
+                alter_statements = [
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS api_key VARCHAR(128) UNIQUE",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_approved BOOLEAN DEFAULT FALSE",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS approved_at TIMESTAMP NULL",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS api_key_created_at TIMESTAMP NULL",
+                    "ALTER TABLE users ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP NULL",
+                ]
+                for stmt in alter_statements:
+                    db.execute(text(stmt))
+                db.commit()
+                logger.info("Schema migration: missing columns added (if any)")
+            except Exception as e:
+                logger.warning(f"Schema migration skipped or failed (likely already up-to-date): {e}")
+                db.rollback()
+            finally:
+                db.close()
+        except Exception as e:
+            logger.warning(f"Schema migration step failed: {e}")
         db = SessionLocal()
         try:
             existing = db.query(User).filter(User.role == UserRole.SUPER_ADMIN).first()
