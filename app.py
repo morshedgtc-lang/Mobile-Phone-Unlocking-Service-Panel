@@ -1,6 +1,7 @@
 """Railway entrypoint — serves API + built frontend static files."""
 import sys
 import os
+import logging
 from pathlib import Path
 
 # Ensure backend is importable
@@ -13,6 +14,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes import auth, users, orders, services, wallet, support, admin_routes, notifications, reseller_api, admin_resellers
 from security.middleware import RateLimiter
 import models.api_log  # noqa: F401 — ensure APIRequestLog table is created
+
+logger = logging.getLogger(__name__)
 
 ENV = os.getenv("ENV", "production").lower()
 ENABLE_DOCS = os.getenv("ENABLE_DOCS", "false").lower() in ("1", "true", "yes")
@@ -39,33 +42,35 @@ def seed_admin():
     from auth.security import Security
     try:
         Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created/verified")
         db = SessionLocal()
-        existing = db.query(User).filter(User.role == UserRole.SUPER_ADMIN).first()
-        if not existing:
-            admin_email = os.getenv("ADMIN_EMAIL")
-            admin_password = os.getenv("ADMIN_PASSWORD")
-            admin_username = os.getenv("ADMIN_USERNAME", "admin")
-            if not admin_email or not admin_password:
-                print("WARNING: ADMIN_EMAIL or ADMIN_PASSWORD not set — skipping admin seed")
-                db.close()
-                return
-            db.add(User(
-                username=admin_username,
-                email=admin_email,
-                hashed_password=Security.get_password_hash(admin_password),
-                full_name="Super Administrator",
-                role=UserRole.SUPER_ADMIN,
-                group=UserGroup.WHOLESALE,
-                is_active=True,
-                is_verified=True,
-                is_approved=True,
-                balance=0.0,
-            ))
-            db.commit()
-            print(f"Super admin created: {admin_email}")
-        db.close()
+        try:
+            existing = db.query(User).filter(User.role == UserRole.SUPER_ADMIN).first()
+            if not existing:
+                admin_email = os.getenv("ADMIN_EMAIL", "admin@unlock.com")
+                admin_password = os.getenv("ADMIN_PASSWORD", "Admin@123456!")
+                admin_username = os.getenv("ADMIN_USERNAME", "admin")
+
+                db.add(User(
+                    username=admin_username,
+                    email=admin_email,
+                    hashed_password=Security.get_password_hash(admin_password),
+                    full_name="Super Administrator",
+                    role=UserRole.SUPER_ADMIN,
+                    group=UserGroup.WHOLESALE,
+                    is_active=True,
+                    is_verified=True,
+                    is_approved=True,
+                    balance=0.0,
+                ))
+                db.commit()
+                logger.info(f"Super admin created: {admin_email}")
+            else:
+                logger.info("Super admin already exists")
+        finally:
+            db.close()
     except Exception as e:
-        print(f"Seed admin skipped: {e}")
+        logger.error(f"Seed admin error: {e}", exc_info=True)
 
 app.add_middleware(
     CORSMiddleware,
