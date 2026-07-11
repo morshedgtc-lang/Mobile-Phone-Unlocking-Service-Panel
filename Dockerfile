@@ -2,16 +2,15 @@ FROM node:20-slim
 
 WORKDIR /app
 
-COPY backend/package*.json ./
-RUN npm install
+COPY backend/package*.json ./backend/
+COPY backend/prisma ./backend/prisma/
 
-COPY backend/prisma ./prisma
-RUN npx prisma generate
+RUN cd backend && npm install && npx prisma generate
 
-COPY backend/ ./
+COPY backend/ ./backend/
 
-RUN npm run build
+RUN cd backend && npx tsc
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate && node dist/index.js"]
+CMD ["sh", "-c", "cd backend && npx prisma db push --skip-generate && node dist/index.js"]

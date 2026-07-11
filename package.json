@@ -1,0 +1,9 @@
+{
+  "name": "unlock-panel",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd backend && npm install && npx prisma generate && npm run build",
+    "start": "cd backend && npx prisma db push --skip-generate && node dist/index.js"
+  }
+}
