@@ -1,0 +1,303 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
+}
+
+enum UserStatus {
+  PENDING_APPROVAL
+  ACTIVE
+  SUSPENDED
+  REJECTED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  REJECTED
+  CANCELLED
+}
+
+enum DepositStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  REFUND
+  DEPOSIT
+  ORDER_PAYMENT
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  SELECT
+  DATE
+  CHECKBOX
+  FILE
+}
+
+model User {
+  id            String      @id @default(uuid())
+  email         String      @unique
+  username      String      @unique
+  password      String
+  phone         String?
+  address       String?
+  role          UserRole    @default(CLIENT)
+  status        UserStatus  @default(PENDING_APPROVAL)
+  currency      String      @default("USDT")
+  balance       Float       @default(0)
+  clientGroupId String?
+  clientGroup   ClientGroup? @relation(fields: [clientGroupId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  orders              Order[]
+  walletTransactions  WalletTransaction[]
+  depositRequests     DepositRequest[]
+  uploadedFiles       UploadedFile[]
+  auditLogs           AuditLog[]
+  orderMessages       OrderMessage[]
+  emailOtps           EmailOtp[]
+  reviewedDeposits    DepositRequest[]   @relation("DepositReviewer")
+
+  @@index([email])
+  @@index([username])
+  @@index([role])
+  @@index([status])
+}
+
+model ClientGroup {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+
+  users       User[]
+  services    ServiceGroupAccess[]
+
+  @@index([name])
+}
+
+model ServiceCategory {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  description String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  services    Service[]
+
+  @@index([name])
+  @@index([isActive])
+}
+
+model Service {
+  id              String              @id @default(uuid())
+  name            String
+  description     String?
+  image           String?
+  categoryId      String
+  category        ServiceCategory     @relation(fields: [categoryId], references: [id])
+  price           Float
+  processingTime  String?
+  isActive        Boolean             @default(true)
+  sortOrder       Int                 @default(0)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  fields          ServiceField[]
+  groupAccess     ServiceGroupAccess[]
+  orders          Order[]
+
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+model ServiceField {
+  id              String      @id @default(uuid())
+  serviceId       String
+  service         Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  label           String
+  type            FieldType   @default(TEXT)
+  required        Boolean     @default(false)
+  placeholder     String?
+  sortOrder       Int         @default(0)
+  validationRules String?
+  options         String?
+  createdAt       DateTime    @default(now())
+
+  orderFieldValues OrderFieldValue[]
+
+  @@index([serviceId])
+}
+
+model ServiceGroupAccess {
+  id        String      @id @default(uuid())
+  serviceId String
+  service   Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  groupId   String
+  group     ClientGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([serviceId, groupId])
+  @@index([serviceId])
+  @@index([groupId])
+}
+
+model Order {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  serviceId     String
+  service       Service       @relation(fields: [serviceId], references: [id])
+  status        OrderStatus   @default(PENDING)
+  totalAmount   Float
+  notes         String?
+  adminNotes    String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  completedAt   DateTime?
+
+  fieldValues   OrderFieldValue[]
+  messages      OrderMessage[]
+  files         UploadedFile[]
+
+  @@index([userId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderFieldValue {
+  id              String        @id @default(uuid())
+  orderId         String
+  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  serviceFieldId  String
+  serviceField    ServiceField  @relation(fields: [serviceFieldId], references: [id])
+  value           String
+
+  @@index([orderId])
+  @@index([serviceFieldId])
+}
+
+model OrderMessage {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([senderId])
+}
+
+model UploadedFile {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  orderId      String?
+  order        Order?   @relation(fields: [orderId], references: [id])
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  expiresAt    DateTime?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([orderId])
+}
+
+model WalletTransaction {
+  id            String          @id @default(uuid())
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  amount        Float
+  type          TransactionType
+  description   String?
+  reference     String?
+  createdBy     String?
+  createdAt     DateTime        @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model DepositRequest {
+  id            String        @id @default(uuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  amount        Float
+  transactionId String?
+  paymentMethod String
+  proofUrl      String?
+  notes         String?
+  status        DepositStatus @default(PENDING)
+  adminNotes    String?
+  reviewedBy    String?
+  reviewer      User?         @relation("DepositReviewer", fields: [reviewedBy], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  resource   String
+  resourceId String?
+  details    String?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([resource])
+  @@index([createdAt])
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}
+
+model EmailOtp {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([code])
+}
