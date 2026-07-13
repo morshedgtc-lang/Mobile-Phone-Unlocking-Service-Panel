@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "cd backend && npm install && npx prisma generate && npm run build",
-    "start": "cd backend && npx prisma db push --skip-generate && node dist/index.js"
+    "build": "cd frontend && npm install && npm run build && cd ../backend && npm install && npx prisma generate && npm run build",
+    "start": "cd backend && npx prisma db push --skip-generate && node dist/index.js",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev"
   }
 }

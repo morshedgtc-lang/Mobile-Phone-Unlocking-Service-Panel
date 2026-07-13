@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
@@ -20,10 +21,12 @@ export const prisma = new PrismaClient();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(rateLimiter);
@@ -41,6 +44,15 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Serve frontend static files from Docker shared public/ directory
+const publicDir = path.join(__dirname, 'public');
+app.use(express.static(publicDir, { index: false }));
+
+// SPA fallback for all non-API routes
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(publicDir, 'index.html'));
+});
+
 app.use(errorHandler);
 
 async function main() {
@@ -52,7 +64,7 @@ async function main() {
   });
 }
 
-main().catch((e) => {
+main().catch(e => {
   console.error('Failed to start server:', e);
   process.exit(1);
 });

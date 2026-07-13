@@ -127,12 +127,12 @@ router.post('/verify-otp', authLimiter, async (req: Request, res: Response) => {
       data: { verified: true },
     });
 
-    await prisma.user.update({
-      where: { email: data.email },
-      data: { isVerified: true },
-    });
+  await prisma.user.update({
+    where: { email: data.email },
+    data: { status: 'ACTIVE' },
+  });
 
-    res.json({ message: 'Email verified successfully' });
+  res.json({ message: 'Email verified successfully' });
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({ error: 'Validation failed', details: error.errors });

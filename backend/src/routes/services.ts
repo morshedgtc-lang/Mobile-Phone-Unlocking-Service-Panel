@@ -17,7 +17,6 @@ router.get('/', async (_req, res: Response) => {
       },
       orderBy: { sortOrder: 'asc' },
     });
-
     res.json(services);
   } catch (error) {
     console.error('List services error:', error);
@@ -33,13 +32,13 @@ router.get('/client', authenticate, async (req: AuthRequest, res: Response) => {
       return;
     }
 
+    const whereClause: Record<string, unknown> = { isActive: true };
+    if (user.clientGroupId) {
+      whereClause.groupAccess = { some: { groupId: user.clientGroupId } };
+    }
+
     const services = await prisma.service.findMany({
-      where: {
-        isActive: true,
-        groupAccess: user.clientGroupId
-          ? { some: { groupId: user.clientGroupId } }
-          : undefined,
-      },
+      where: whereClause,
       include: {
         category: { select: { id: true, name: true } },
         fields: { orderBy: { sortOrder: 'asc' } },
