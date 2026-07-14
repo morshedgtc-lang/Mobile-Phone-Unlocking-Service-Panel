@@ -494,7 +494,7 @@ router.get('/deposits', async (_req: AuthRequest, res: Response) => {
 
 router.post('/deposits/:id/approve', async (req: AuthRequest, res: Response) => {
   try {
-    const deposit = await prisma.$transaction(async (tx) => {
+    const deposit = await prisma.$transaction(async (tx: any) => {
       const d = await tx.depositRequest.update({
         where: { id: req.params.id },
         data: {
@@ -551,7 +551,7 @@ router.post('/wallet/credit', async (req: AuthRequest, res: Response) => {
   try {
     const data = creditSchema.parse(req.body);
 
-    const user = await prisma.$transaction(async (tx) => {
+    const u = await prisma.$transaction(async (tx: any) => {
       const u = await tx.user.update({
         where: { id: data.userId },
         data: { balance: { increment: data.amount } },
@@ -570,7 +570,7 @@ router.post('/wallet/credit', async (req: AuthRequest, res: Response) => {
       return u;
     });
 
-    res.json({ id: user.id, balance: user.balance });
+    res.json({ id: u.id, balance: u.balance });
   } catch (error) {
     if (error instanceof z.ZodError) {
       res.status(400).json({ error: 'Validation failed', details: error.errors });

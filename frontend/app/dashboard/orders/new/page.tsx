@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import apiClient from '@/lib/api-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -13,6 +13,7 @@ interface Service {
   name: string;
   description: string;
   price: number;
+  processingTime?: string;
   fields: {
     id: string;
     label: string;
@@ -23,16 +24,12 @@ interface Service {
   }[];
 }
 
-export default function NewOrderPage() {
+function OrderFormInner({ serviceId }: { serviceId: string | null }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const serviceId = searchParams.get('service');
-
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState('');
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,7 +43,9 @@ export default function NewOrderPage() {
       if (service) {
         setSelectedService(service);
         const initial: Record<string, string> = {};
-        service.fields.forEach((f) => { initial[f.id] = ''; });
+        service.fields.forEach((f) => {
+          initial[f.id] = '';
+        });
         setFieldValues(initial);
       }
     }
@@ -58,8 +57,6 @@ export default function NewOrderPage() {
       setServices(response.data);
     } catch (error) {
       console.error('Failed to load services:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -80,8 +77,11 @@ export default function NewOrderPage() {
         })),
       });
       router.push('/dashboard/orders');
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to create order');
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { error?: string } } }).response?.data?.error ||
+        'Failed to create order';
+      setError(msg);
     } finally {
       setSubmitting(false);
     }
@@ -100,7 +100,7 @@ export default function NewOrderPage() {
             required={field.required}
           />
         );
-      case 'SELECT':
+      case 'SELECT': {
         const options = field.options ? JSON.parse(field.options) : [];
         return (
           <Select
@@ -112,6 +112,7 @@ export default function NewOrderPage() {
             required={field.required}
           />
         );
+      }
       case 'NUMBER':
         return (
           <Input
@@ -142,7 +143,12 @@ export default function NewOrderPage() {
               type="checkbox"
               id={field.id}
               checked={fieldValues[field.id] === 'true'}
-              onChange={(e) => setFieldValues({ ...fieldValues, [field.id]: e.target.checked ? 'true' : 'false' })}
+              onChange={(e) =>
+                setFieldValues({
+                  ...fieldValues,
+                  [field.id]: e.target.checked ? 'true' : 'false',
+                })
+              }
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
             <label htmlFor={field.id} className="text-sm text-gray-700">
@@ -172,105 +178,125 @@ export default function NewOrderPage() {
         <p className="text-gray-600">Select a service and fill in the details</p>
       </div>
 
-      {loading ? (
-        <div className="text-center py-8">Loading services...</div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Select Service</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Select
-                  label="Service"
-                  value={selectedService?.id || ''}
-                  onChange={(e) => {
-                    const service = services.find((s) => s.id === e.target.value);
-                    setSelectedService(service || null);
-                    if (service) {
-                      const initial: Record<string, string> = {};
-                      service.fields.forEach((f) => { initial[f.id] = ''; });
-                      setFieldValues(initial);
-                    }
-                  }}
-                  options={[
-                    { value: '', label: 'Choose a service...' },
-                    ...services.map((s) => ({ value: s.id, label: s.name })),
-                  ]}
-                />
-              </CardContent>
-            </Card>
-
-            {selectedService && (
-              <Card className="mt-6">
-                <CardHeader>
-                  <CardTitle>Service Details</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    {error && (
-                      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                        {error}
-                      </div>
-                    )}
-
-                    {selectedService.fields.length > 0 && (
-                      <div className="space-y-4">
-                        <h3 className="font-medium text-gray-900">Required Information</h3>
-                        {selectedService.fields
-                          .sort((a, b) => a.label.localeCompare(b.label))
-                          .map(renderField)}
-                      </div>
-                    )}
-
-                    <Textarea
-                      label="Additional Notes"
-                      value={notes}
-                      onChange={(e) => setNotes(e.target.value)}
-                      placeholder="Any additional information..."
-                    />
-
-                    <Button type="submit" loading={submitting} className="w-full">
-                      Place Order — {formatCurrency(selectedService.price)}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          <div>
-            <Card className="sticky top-8">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {selectedService ? (
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-gray-600">Service</p>
-                      <p className="font-medium text-gray-900">{selectedService.name}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Price</p>
-                      <p className="text-2xl font-bold text-gray-900">{formatCurrency(selectedService.price)}</p>
-                    </div>
-                    {selectedService.processingTime && (
-                      <div>
-                        <p className="text-sm text-gray-600">Processing Time</p>
-                        <p className="text-gray-900">{selectedService.processingTime}</p>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-gray-500 text-center py-4">Select a service to see details</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          {error}
         </div>
       )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Select Service</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Select
+                label="Service"
+                value={selectedService?.id || ''}
+                onChange={(e) => {
+                  const service = services.find((s) => s.id === e.target.value);
+                  setSelectedService(service || null);
+                  if (service) {
+                    const initial: Record<string, string> = {};
+                    service.fields.forEach((f) => {
+                      initial[f.id] = '';
+                    });
+                    setFieldValues(initial);
+                  }
+                }}
+                options={[
+                  { value: '', label: 'Choose a service...' },
+                  ...services.map((s) => ({ value: s.id, label: s.name })),
+                ]}
+              />
+            </CardContent>
+          </Card>
+
+          {selectedService && (
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Service Details</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {selectedService.fields.length > 0 && (
+                    <div className="space-y-4">
+                      <h3 className="font-medium text-gray-900">Required Information</h3>
+                      {selectedService.fields
+                        .sort((a, b) => a.label.localeCompare(b.label))
+                        .map(renderField)}
+                    </div>
+                  )}
+
+                  <Textarea
+                    label="Additional Notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Any additional information..."
+                  />
+
+                  <Button type="submit" loading={submitting} className="w-full">
+                    Place Order — {formatCurrency(selectedService.price)}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        <div>
+          <Card className="sticky top-8">
+            <CardHeader>
+              <CardTitle>Order Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedService ? (
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-600">Service</p>
+                    <p className="font-medium text-gray-900">{selectedService.name}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Price</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {formatCurrency(selectedService.price)}
+                    </p>
+                  </div>
+                  {selectedService.processingTime && (
+                    <div>
+                      <p className="text-sm text-gray-600">Processing Time</p>
+                      <p className="text-gray-900">{selectedService.processingTime}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-center py-4">
+                  Select a service to see details
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
+}
+
+export default function NewOrderPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="text-center py-8 text-gray-500">Loading order form…</div>
+      }
+    >
+      <OrderFormInnerWrapper />
+    </Suspense>
+  );
+}
+
+function OrderFormInnerWrapper() {
+  const searchParams = useSearchParams();
+  const serviceId = searchParams.get('service');
+  return <OrderFormInner serviceId={serviceId} />;
 }

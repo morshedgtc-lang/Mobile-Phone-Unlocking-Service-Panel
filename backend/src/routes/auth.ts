@@ -41,12 +41,12 @@ function generateTokens(user: { id: string; email: string; role: string }) {
   const accessToken = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
     config.jwtSecret,
-    { expiresIn: config.jwtExpiresIn }
+    { expiresIn: config.jwtExpiresIn } as jwt.SignOptions
   );
   const refreshToken = jwt.sign(
     { id: user.id, email: user.email, role: user.role },
     config.jwtRefreshSecret,
-    { expiresIn: config.jwtRefreshExpiresIn }
+    { expiresIn: config.jwtRefreshExpiresIn } as jwt.SignOptions
   );
   return { accessToken, refreshToken };
 }

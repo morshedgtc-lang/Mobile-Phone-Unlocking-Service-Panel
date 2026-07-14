@@ -43,16 +43,16 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response) => {
       return;
     }
 
-    const requiredFields = service.fields.filter(f => f.required);
-    for (const field of requiredFields) {
-      const hasValue = data.fieldValues.some(fv => fv.serviceFieldId === field.id && fv.value);
+  const requiredFields = service.fields.filter((f: { id: string; required: boolean }) => f.required);
+  for (const field of requiredFields) {
+    const hasValue = data.fieldValues.some((fv: { serviceFieldId: string; value: string }) => fv.serviceFieldId === field.id && fv.value);
       if (!hasValue) {
         res.status(400).json({ error: `Field "${field.label}" is required` });
         return;
       }
     }
 
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await prisma.$transaction(async (tx: any) => {
       const newOrder = await tx.order.create({
         data: {
           userId: user.id,
